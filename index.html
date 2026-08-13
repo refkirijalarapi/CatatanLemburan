@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catatan Lemburan</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,600&display=swap');
+
+    :root {
+        --cyan: #00f0ff;
+        --cyan-soft: #45f3ff;
+        --pink: #ff2ea6;
+        --pink-soft: #ff6ec7;
+        --bg: #05060a;
+        --panel: #0d0f18;
+        --panel-2: #12141f;
+        --panel-3: #191b28;
+        --text: #eef2ff;
+        --text-dim: #8890a8;
+        --text-faint: #565d78;
+        --green: #2dffb0;
+        --red: #ff4d6d;
+        --amber: #ffb02e;
+        --border: rgba(255,255,255,0.07);
+        --gold: #ffb02e;
+        --gold-soft: #ffd27a;
+        --font-display: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+        --font-body: 'Inter', 'Segoe UI', Arial, sans-serif;
+        --font-serif: 'Playfair Display', 'Georgia', serif;
+    }
+
+    * { box-sizing: border-box; }
+    ::selection { background: rgba(0,240,255,0.28); color: #fff; }
+
+    body {
+        font-family: var(--font-body);
+        margin: 0;
+        padding: 20px 14px 50px;
+        min-height: 100vh;
+        background:
+            radial-gradient(circle at 12% 8%, rgba(255,46,166,0.15), transparent 42%),
+            radial-gradient(circle at 88% 0%, rgba(0,240,255,0.13), transparent 38%),
+            radial-gradient(circle at 50% 105%, rgba(0,240,255,0.07), transparent 48%),
+            var(--bg);
+        color: var(--text);
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image:
+            linear-gradient(rgba(0,240,255,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,240,255,0.03) 1px, transparent 1px);
+        background-size: 34px 34px;
+        pointer-events: none;
+        z-index: 0;
+        mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 90%);
+    }
+    body::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.5;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+        mix-blend-mode: overlay;
+    }
+
+    .icon { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; vertical-align: -2px; }
+
+    .wrap { max-width: 460px; margin: 0 auto; position: relative; z-index: 1; }
+
+    /* ===== Brand top bar ===== */
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 4px 4px 18px;
+    }
+    .brand-text { flex-grow: 1; min-width: 0; }
+    .brand-text h1 {
+        margin: 0; font-size: 1.12rem; font-weight: 800; letter-spacing: 0.2px;
+        color: var(--text);
+        font-family: var(--font-display);
+    }
+    .brand-text .sub-row { display: flex; align-items: center; gap: 6px; margin-top: 3px; }
+    .live-pill {
+        font-size: 0.62em;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+        color: var(--green);
+        background: rgba(45,255,176,0.1);
+        border: 1px solid rgba(45,255,176,0.35);
+        padding: 2px 7px;
+        border-radius: 20px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .live-pill::before {
+        content: '';
+        width: 5px; height: 5px; border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 6px var(--green);
+        animation: pulseDot 1.6s infinite;
+    }
+    @keyframes pulseDot { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+    .icon-button {
+        flex-shrink: 0;
+        width: 42px; height: 42px;
+        border-radius: 12px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(0,240,255,0.22);
+        color: var(--cyan-soft);
+        cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        transition: transform 0.35s ease, background 0.2s, border-color 0.2s;
+    }
+    .icon-button .icon { width: 19px; height: 19px; }
+    .icon-button:hover { background: rgba(0,240,255,0.1); border-color: var(--cyan); }
+    #settings-button:hover { transform: rotate(50deg); }
+
+    /* ===== Main card ===== */
+    .container {
+        background: linear-gradient(180deg, rgba(20,22,33,0.92), rgba(9,10,17,0.95));
+        backdrop-filter: blur(18px);
+        padding: 22px 20px 26px;
+        border-radius: 24px;
+        border: 1px solid rgba(0,240,255,0.16);
+        box-shadow:
+            0 0 0 1px rgba(255,46,166,0.04),
+            0 26px 65px rgba(0,0,0,0.55),
+            0 0 50px rgba(0,240,255,0.05),
+            inset 0 1px 0 rgba(255,255,255,0.04),
+            inset 0 0 40px rgba(255,176,46,0.02);
+        animation: fadeUp 0.55s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .container::before {
+        content: '';
+        position: absolute; top: 0; left: 0; right: 0; height: 2px;
+        background: linear-gradient(90deg, transparent, var(--cyan), var(--gold), var(--pink), transparent);
+        background-size: 200% 100%;
+        opacity: 0.8;
+        animation: sheenSlide 7s linear infinite;
+    }
+    .container::after {
+        content: '';
+        position: absolute; inset: 0;
+        border-radius: 24px;
+        pointer-events: none;
+        border: 1px solid transparent;
+        background:
+            linear-gradient(#0000,#0000) padding-box,
+            linear-gradient(160deg, rgba(255,176,46,0.22), rgba(255,255,255,0) 30%, rgba(255,255,255,0) 70%, rgba(0,240,255,0.14)) border-box;
+        -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+    }
+
+    @keyframes sheenSlide { 0% { background-position: 0% 0; } 100% { background-position: 200% 0; } }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Period selector row */
+    .period-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding: 11px 13px;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.025);
+        border: 1px solid rgba(0,240,255,0.14);
+        margin-bottom: 16px;
+    }
+    .period-label { display: flex; flex-direction: column; gap: 2px; }
+    .period-label small { font-size: 0.65em; color: var(--text-faint); letter-spacing: 0.7px; text-transform: uppercase; display: flex; align-items: center; gap: 4px; }
+    .period-label small .icon { color: var(--gold-soft); }
+    .period-display { font-size: 0.9em; color: var(--cyan-soft); font-weight: 700; font-family: var(--font-display); letter-spacing: 0.2px; }
+
+    .period-row select {
+        padding: 8px 10px;
+        border-radius: 10px;
+        border: 1px solid rgba(255,46,166,0.32);
+        background: var(--panel-2);
+        color: var(--text);
+        font-size: 0.82em;
+        outline: none;
+        cursor: pointer;
+        max-width: 46%;
+    }
+    .period-row select:focus { border-color: var(--pink); box-shadow: 0 0 0 2px rgba(255,46,166,0.18); }
+
+    /* Stat cards */
+    .stat-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+    .stat-card {
+        background: rgba(255,255,255,0.025);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 13px 14px;
+        text-align: left;
+        position: relative;
+        overflow: hidden;
+        transition: border-color 0.25s, transform 0.2s, background 0.25s;
+    }
+    .stat-card::after {
+        content: '';
+        position: absolute; top: -30px; right: -30px;
+        width: 70px; height: 70px; border-radius: 50%;
+        background: radial-gradient(circle, rgba(0,240,255,0.14), transparent 70%);
+        pointer-events: none;
+    }
+    .stat-card.tunjangan::after { background: radial-gradient(circle, rgba(255,46,166,0.14), transparent 70%); }
+    .stat-card:hover { border-color: rgba(0,240,255,0.3); transform: translateY(-2px); background: rgba(255,255,255,0.04); }
+    .stat-card .stat-label {
+        font-size: 0.65em;
+        color: var(--text-faint);
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        margin-bottom: 7px;
+        display: flex; align-items: center; gap: 6px;
+    }
+    .stat-card .stat-label .icon-chip {
+        width: 20px; height: 20px; border-radius: 7px;
+        display: flex; align-items: center; justify-content: center;
+        background: rgba(0,240,255,0.1);
+        border: 1px solid rgba(0,240,255,0.22);
+        flex-shrink: 0;
+    }
+    .stat-card.tunjangan .stat-label .icon-chip { background: rgba(255,46,166,0.1); border-color: rgba(255,46,166,0.24); }
+    .stat-card .stat-label .icon { color: var(--cyan-soft); width: 12px; height: 12px; }
+    .stat-card.tunjangan .stat-label .icon { color: var(--pink-soft); }
+    .stat-card .stat-value {
+        font-size: 1.05em;
+        font-weight: 800;
+        color: var(--text);
+        font-family: var(--font-display);
+        letter-spacing: 0.2px;
+        position: relative;
+    }
+
+    .stat-card.tunjangan { position: relative; }
+
+    /* ===== Detail toggle & breakdown panel ===== */
+    .detail-toggle {
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+        width: 20px; height: 20px;
+        background: rgba(255,176,46,0.1);
+        border: 1px solid rgba(255,176,46,0.3);
+        color: var(--gold-soft);
+        padding: 0;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background 0.2s, border-color 0.2s;
+    }
+    .detail-toggle:hover { background: rgba(255,176,46,0.2); border-color: var(--gold); }
+    .detail-toggle .chevron { width: 11px; height: 11px; transition: transform 0.25s ease; }
+    .detail-toggle.open .chevron { transform: rotate(180deg); }
+    .detail-toggle.inline {
+        display: inline-flex;
+        margin-left: 6px;
+        vertical-align: middle;
+    }
+    .totals-row .label-icon { flex-wrap: wrap; }
+
+    .detail-panel {
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition: max-height 0.35s ease, opacity 0.25s ease, margin 0.35s ease;
+        margin-bottom: 0;
+    }
+    .detail-panel.open {
+        max-height: 400px;
+        opacity: 1;
+        margin-bottom: 14px;
+    }
+    .detail-panel .mini-list { margin-bottom: 0; padding: 11px 12px 2px; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,176,46,0.25); border-radius: 12px; }
+    .detail-panel .mini-item { background: rgba(255,255,255,0.02); }
+
+    .stat-value-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+    .totals-row .val-wrap { display: flex; align-items: center; gap: 7px; }
+
+    .absen-strip {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 16px;
+        padding: 9px 12px;
+        border-radius: 12px;
+        background: rgba(255,255,255,0.02);
+        border: 1px solid var(--border);
+        font-size: 0.75em;
+        color: var(--text-faint);
+    }
+    .absen-strip .divider { width: 1px; background: var(--border); }
+    .absen-strip span b { color: var(--text); font-weight: 700; }
+    .absen-strip .dot-sick { color: var(--green); display: flex; align-items: center; gap: 5px; }
+    .absen-strip .dot-izin { color: var(--red); display: flex; align-items: center; gap: 5px; }
+    .absen-strip .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 6px currentColor; }
+
+    /* List section */
+    .section-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        padding-top: 4px;
+    }
+    .section-heading h2 {
+        font-size: 0.78em;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        color: var(--text-faint);
+        margin: 0;
+        font-weight: 700;
+        display: flex; align-items: center; gap: 6px;
+    }
+    .section-heading h2 .icon { color: var(--gold-soft); }
+    .section-heading .line {
+        flex-grow: 1;
+        height: 1px;
+        margin-left: 10px;
+        background: linear-gradient(90deg, rgba(255,176,46,0.4), transparent);
+    }
+
+    .overtime-list-container { margin-bottom: 16px; }
+
+    #overtime-list:empty::after {
+        content: 'Belum ada catatan lembur pada periode ini.';
+        display: block;
+        text-align: center;
+        color: var(--text-faint);
+        font-size: 0.85em;
+        padding: 30px 10px;
+        font-style: italic;
+        border: 1px dashed rgba(255,255,255,0.1);
+        border-radius: 14px;
+    }
+
+    .overtime-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 13px 13px 13px 15px;
+        margin-bottom: 9px;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.025);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--cyan-soft);
+        transition: border-color 0.2s, transform 0.15s, background 0.2s, box-shadow 0.2s;
+        gap: 10px;
+        animation: itemRise 0.4s ease both;
+    }
+    @keyframes itemRise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .overtime-item.holiday { border-left-color: var(--pink); }
+    .overtime-item:hover {
+        border-color: rgba(0,240,255,0.28);
+        background: rgba(255,255,255,0.045);
+        transform: translateX(2px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    }
+
+    .overtime-info { display: flex; flex-direction: column; flex-grow: 1; min-width: 0; gap: 3px; }
+    .overtime-date-row { display: flex; align-items: center; gap: 6px; }
+    .overtime-date { font-weight: 700; color: var(--text); font-size: 0.9em; }
+    .holiday-badge {
+        font-size: 0.6em; font-weight: 800; letter-spacing: 0.4px;
+        color: var(--pink-soft); background: rgba(255,46,166,0.12);
+        border: 1px solid rgba(255,46,166,0.3);
+        padding: 1px 6px; border-radius: 20px; text-transform: uppercase;
+    }
+    .overtime-reason { color: var(--text-faint); font-size: 0.76em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .overtime-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+    .overtime-hours {
+        font-weight: 700; color: var(--cyan);
+        font-size: 0.76em;
+        background: rgba(0,240,255,0.1);
+        padding: 3px 9px;
+        border-radius: 20px;
+        white-space: nowrap;
+    }
+    .overtime-cost { font-weight: 700; color: var(--green); font-size: 0.86em; white-space: nowrap; font-family: var(--font-display); }
+
+    .delete-button {
+        background: rgba(255,77,109,0.1);
+        color: var(--red);
+        border: 1px solid rgba(255,77,109,0.32);
+        border-radius: 8px;
+        width: 26px; height: 26px;
+        cursor: pointer;
+        font-size: 0.95em;
+        line-height: 1;
+        flex-shrink: 0;
+        transition: background 0.2s, transform 0.15s;
+    }
+    .delete-button:hover { background: rgba(255,77,109,0.26); transform: scale(1.08); }
+    .delete-button.confirm-delete { background: var(--red); color: #fff; border-color: var(--red); animation: confirmPulse 0.9s infinite; }
+    @keyframes confirmPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+    /* Totals */
+    .totals-box {
+        border-top: 1px solid rgba(0,240,255,0.16);
+        padding-top: 14px;
+        margin-top: 4px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .totals-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.88em;
+        color: var(--text-dim);
+    }
+    .totals-row .label-icon { display: flex; align-items: center; gap: 6px; }
+    .totals-row .label-icon .icon { width: 14px; height: 14px; color: var(--text-faint); }
+    .totals-row .val { font-weight: 700; font-family: var(--font-display); }
+    .totals-row .val.green { color: var(--green); }
+    .totals-row .val.cyan { color: var(--cyan); }
+    .totals-row .val.red { color: var(--red); }
+
+    .total-salary {
+        text-align: center;
+        font-size: 0.85em;
+        font-weight: 600;
+        margin-top: 10px;
+        padding: 19px 14px;
+        border-radius: 17px;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        font-size: 0.72em;
+        background: linear-gradient(120deg, rgba(0,240,255,0.1), rgba(255,46,166,0.1));
+        border: 1px solid rgba(255,176,46,0.3);
+        line-height: 1.5;
+        position: relative;
+        overflow: hidden;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .total-salary::before, .total-salary::after {
+        content: '';
+        position: absolute; width: 16px; height: 16px;
+        border: 1.5px solid rgba(255,176,46,0.55);
+        opacity: 0.9;
+    }
+    .total-salary::before { top: 8px; left: 8px; border-right: none; border-bottom: none; border-radius: 4px 0 0 0; }
+    .total-salary::after { bottom: 8px; right: 8px; border-left: none; border-top: none; border-radius: 0 0 4px 0; }
+    .total-salary .amount {
+        display: block;
+        color: var(--green);
+        font-size: 1.85em;
+        font-weight: 800;
+        margin-top: 6px;
+        text-shadow: 0 0 22px rgba(45,255,176,0.28);
+        font-family: var(--font-display);
+        letter-spacing: 0.3px;
+        text-transform: none;
+    }
+
+    .action-row { display: flex; gap: 10px; margin-top: 16px; }
+
+    .slip-button {
+        flex: 1;
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        padding: 14px 10px;
+        border-radius: 13px;
+        border: 1px solid rgba(255,176,46,0.4);
+        background: linear-gradient(135deg, rgba(0,240,255,0.08), rgba(255,176,46,0.07));
+        color: var(--gold-soft);
+        font-weight: 700;
+        font-size: 0.86em;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: background 0.2s, transform 0.15s, border-color 0.2s, box-shadow 0.2s;
+        box-shadow: 0 4px 16px rgba(255,176,46,0.08);
+    }
+    .slip-button::before {
+        content: '';
+        position: absolute; top: 0; bottom: 0; left: -60%;
+        width: 40%;
+        background: linear-gradient(120deg, transparent, rgba(255,255,255,0.16), transparent);
+        transform: skewX(-20deg);
+        animation: slipSheen 3.2s ease-in-out infinite;
+    }
+    @keyframes slipSheen { 0% { left: -60%; } 45%,100% { left: 130%; } }
+    .slip-button:hover { background: linear-gradient(135deg, rgba(0,240,255,0.14), rgba(255,176,46,0.14)); border-color: var(--gold); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(255,176,46,0.18); }
+    .slip-button .icon { width: 16px; height: 16px; position: relative; z-index: 1; }
+    .slip-button span.label { position: relative; z-index: 1; }
+
+    .add-button {
+        flex-shrink: 0;
+        width: 52px;
+        height: 52px;
+        background: linear-gradient(135deg, var(--cyan), var(--pink));
+        color: #05060a;
+        border: none;
+        border-radius: 15px;
+        font-size: 1.9em;
+        cursor: pointer;
+        text-align: center;
+        line-height: 52px;
+        font-weight: 700;
+        box-shadow: 0 6px 22px rgba(0,240,255,0.3), 0 6px 22px rgba(255,46,166,0.2), 0 0 0 1px rgba(255,176,46,0.3);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .add-button:hover { transform: scale(1.06) rotate(90deg); box-shadow: 0 8px 28px rgba(0,240,255,0.45), 0 8px 28px rgba(255,46,166,0.35), 0 0 0 1px rgba(255,176,46,0.5); }
+    .add-button:active { transform: scale(0.95); }
+
+    /* ===== Legal box ===== */
+    .legal-text-container {
+        max-width: 460px;
+        margin: 20px auto 0;
+        color: var(--text-dim);
+        font-size: 0.81em;
+        line-height: 1.65;
+        padding: 17px 19px;
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(0,240,255,0.1);
+        border-radius: 17px;
+        position: relative;
+        z-index: 1;
+    }
+    .legal-text-container h3 {
+        display: flex; align-items: center; gap: 8px;
+        color: var(--gold-soft);
+        border-bottom: 1px solid rgba(255,176,46,0.22);
+        padding-bottom: 10px;
+        font-size: 0.96em;
+        margin-top: 0;
+        font-family: var(--font-display);
+        font-weight: 700;
+        letter-spacing: 0.2px;
+    }
+    .legal-text-container strong { color: var(--pink-soft); }
+    .legal-text-container p { margin-bottom: 13px; }
+    .legal-text-container p:last-child { margin-bottom: 0; }
+
+    .footer-note { text-align: center; color: var(--text-faint); font-size: 0.72em; margin: 22px 0 0; letter-spacing: 0.3px; }
+
+    /* ===== Modal ===== */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 10;
+        inset: 0;
+        background: rgba(2,3,8,0.8);
+        backdrop-filter: blur(7px);
+        overflow-y: auto;
+    }
+    .modal.show { display: flex; align-items: flex-start; justify-content: center; animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .modal-content {
+        background: linear-gradient(180deg, #15161f, #0a0b12);
+        margin: 6vh auto;
+        padding: 4px 20px 22px;
+        border-radius: 22px;
+        width: 90%;
+        max-width: 400px;
+        box-sizing: border-box;
+        border: 1px solid rgba(255,46,166,0.22);
+        box-shadow: 0 25px 60px rgba(0,0,0,0.6), 0 0 44px rgba(255,46,166,0.08);
+        animation: popIn 0.25s ease;
+        max-height: 88vh;
+        overflow-y: auto;
+    }
+    @keyframes popIn { from { opacity: 0; transform: translateY(10px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+    .modal-head {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 18px 0 14px;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        margin-bottom: 14px;
+        position: sticky; top: 0;
+        background: linear-gradient(180deg, #15161f, #14151e 90%);
+        z-index: 1;
+    }
+    .modal-head h2 {
+        margin: 0; font-size: 1.12em; font-weight: 800;
+        background: linear-gradient(90deg, var(--cyan-soft), var(--gold-soft), var(--pink-soft));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        font-family: var(--font-display);
+        display: flex; align-items: center; gap: 8px;
+        letter-spacing: 0.2px;
+    }
+    .modal-head h2 .icon { color: var(--gold-soft); -webkit-text-fill-color: initial; }
+
+    .close-button {
+        color: var(--text-dim);
+        font-size: 22px;
+        font-weight: bold;
+        cursor: pointer;
+        line-height: 1;
+        width: 30px; height: 30px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        background: rgba(255,255,255,0.04);
+        transition: color 0.2s, background 0.2s;
+        flex-shrink: 0;
+    }
+    .close-button:hover { color: var(--pink); background: rgba(255,46,166,0.12); }
+
+    .field-group { margin-bottom: 4px; }
+    label {
+        display: block;
+        font-size: 0.78em;
+        color: var(--text-faint);
+        margin-bottom: 5px;
+        margin-top: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    .time-range-container { display: flex; gap: 10px; margin-bottom: 2px; }
+    .time-input-group { flex: 1; }
+    .time-input-group label { margin-top: 0; }
+
+    input[type="time"], input[type="date"], input[type="text"], input[type="number"], select.field-select {
+        width: 100%;
+        padding: 11px 12px;
+        border: 1px solid rgba(0,240,255,0.18);
+        border-radius: 11px;
+        box-sizing: border-box;
+        background: var(--panel-2);
+        color: var(--text);
+        font-size: 0.9em;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        font-family: var(--font-body);
+    }
+    input[type="time"]:focus, input[type="date"]:focus, input[type="text"]:focus, input[type="number"]:focus, select.field-select:focus {
+        border-color: var(--cyan);
+        box-shadow: 0 0 0 3px rgba(0,240,255,0.14), 0 0 0 1px rgba(255,176,46,0.25);
+    }
+    input::-webkit-calendar-picker-indicator { filter: invert(0.8) sepia(1) saturate(4) hue-rotate(150deg); cursor: pointer; }
+
+    .holiday-toggle {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 16px 0 4px;
+        background: rgba(255,77,109,0.08);
+        padding: 12px;
+        border-radius: 11px;
+        border: 1px solid rgba(255,77,109,0.28);
+    }
+    .holiday-toggle input { accent-color: var(--pink); width: 17px; height: 17px; cursor: pointer; }
+    .holiday-toggle label { margin: 0; font-weight: 700; color: var(--red) !important; cursor: pointer; text-transform: none; letter-spacing: 0; font-size: 0.88em; }
+
+    .summary-box {
+        background: rgba(255,255,255,0.03);
+        padding: 14px 15px;
+        border-radius: 13px;
+        margin: 14px 0 16px;
+        border-left: 3px solid var(--green);
+        font-size: 0.9em;
+    }
+    .summary-box div { color: var(--text-dim); }
+    .summary-box .summary-row { display: flex; justify-content: space-between; margin-top: 7px; }
+    .summary-box #display-durasi { color: var(--cyan); }
+    .summary-box #calculated-cost { color: var(--green) !important; }
+
+    .save-button {
+        background: linear-gradient(90deg, var(--cyan), var(--pink));
+        color: #05060a;
+        padding: 14px;
+        border: none;
+        border-radius: 13px;
+        width: 100%;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 1em;
+        letter-spacing: 0.3px;
+        transition: transform 0.15s, box-shadow 0.2s;
+        box-shadow: 0 6px 18px rgba(0,240,255,0.2);
+        margin-top: 6px;
+        font-family: var(--font-body);
+    }
+    .save-button:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(255,46,166,0.32); }
+    .save-button:active { transform: translateY(0); }
+
+    /* ===== Settings modal specific ===== */
+    .settings-section {
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .settings-section:first-of-type { margin-top: 4px; padding-top: 0; border-top: none; }
+    .settings-section-title {
+        font-size: 0.72em;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: var(--cyan-soft);
+        font-weight: 800;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .settings-section-hint {
+        font-size: 0.74em;
+        color: var(--text-faint);
+        margin: -4px 0 10px;
+        line-height: 1.5;
+    }
+
+    .mini-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+    .mini-item {
+        display: flex; align-items: center; justify-content: space-between;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 8px 10px;
+        gap: 8px;
+    }
+    .mini-item .mini-info { display: flex; flex-direction: column; min-width: 0; }
+    .mini-item .mini-name { font-size: 0.84em; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .mini-item .mini-sub { font-size: 0.72em; color: var(--text-faint); }
+    .mini-item .mini-value { font-size: 0.86em; font-weight: 700; white-space: nowrap; font-family: var(--font-display); }
+    .mini-item .mini-value.plus { color: var(--green); }
+    .mini-item .mini-value.minus { color: var(--red); }
+    .mini-item .mini-value.sakit { color: var(--green); }
+    .mini-item .mini-value.izin { color: var(--red); }
+    .mini-empty { font-size: 0.78em; color: var(--text-faint); font-style: italic; padding: 6px 2px 10px; }
+
+    .mini-del {
+        background: rgba(255,77,109,0.1);
+        color: var(--red);
+        border: 1px solid rgba(255,77,109,0.3);
+        border-radius: 7px;
+        width: 24px; height: 24px;
+        flex-shrink: 0;
+        cursor: pointer;
+        font-size: 0.85em;
+        line-height: 1;
+        transition: background 0.2s;
+    }
+    .mini-del:hover { background: rgba(255,77,109,0.25); }
+
+    .add-row { display: flex; gap: 8px; align-items: flex-end; }
+    .add-row .grow { flex: 1.4; min-width: 0; }
+    .add-row .grow2 { flex: 1; min-width: 0; }
+    .add-row input, .add-row select { margin-bottom: 0; }
+    .add-row-btn {
+        flex-shrink: 0;
+        width: 42px; height: 42px;
+        border-radius: 10px;
+        border: 1px solid rgba(0,240,255,0.3);
+        background: rgba(0,240,255,0.08);
+        color: var(--cyan);
+        font-size: 1.3em;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.15s;
+    }
+    .add-row-btn:hover { background: rgba(0,240,255,0.18); transform: scale(1.05); }
+
+    .gaji-pokok-input { font-size: 1.05em; font-weight: 700; }
+
+    /* ===== Slip Gaji (premium letterhead) ===== */
+    .slip-paper {
+        background: linear-gradient(180deg, #ffffff, #f4f6fb);
+        border-radius: 16px;
+        padding: 26px 14px 22px;
+        color: #1b1d2a;
+        position: relative;
+        overflow: hidden;
+        box-shadow: inset 0 0 0 1px #eceef7;
+    }
+    .slip-paper::before {
+        content: '';
+        position: absolute; top: 0; left: 0; right: 0; height: 5px;
+        background: linear-gradient(90deg, #00c3d6, #ffb02e, #ff2ea6);
+    }
+    .slip-watermark {
+        position: absolute;
+        inset: 0;
+        display: flex; align-items: center; justify-content: center;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: 0;
+    }
+    .slip-watermark span {
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 2.1em;
+        color: #007c8c;
+        opacity: 0.045;
+        white-space: nowrap;
+        transform: rotate(-28deg) scale(1.4);
+        letter-spacing: 2px;
+    }
+    .slip-head, .slip-section-title, .slip-row, .slip-total-row, .slip-final, .slip-footer, .slip-sign {
+        position: relative;
+        z-index: 1;
+    }
+    .slip-head {
+        text-align: center;
+        padding-bottom: 16px;
+        margin-bottom: 14px;
+        border-bottom: 2px solid #e2e5f0;
+        position: relative;
+    }
+    .slip-head::after {
+        content: '';
+        position: absolute; left: 50%; bottom: -2px; transform: translateX(-50%);
+        width: 56px; height: 2px;
+        background: linear-gradient(90deg, #00c3d6, #ffb02e, #ff2ea6);
+    }
+    .slip-crest {
+        width: 40px; height: 40px;
+        margin: 0 auto 8px;
+        border-radius: 50%;
+        background: linear-gradient(150deg, #00c3d6, #ff2ea6);
+        display: flex; align-items: center; justify-content: center;
+        font-family: var(--font-display);
+        font-weight: 800; font-size: 0.85em; color: #fff;
+        box-shadow: 0 4px 14px rgba(0,124,140,0.22), 0 0 0 3px #fff, 0 0 0 4px #ffb02e55;
+    }
+    .slip-head .co-name {
+        font-family: var(--font-serif);
+        font-weight: 800;
+        font-size: 1.28em;
+        letter-spacing: 0.3px;
+        background: linear-gradient(90deg, #007c8c, #d6197e);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    .slip-head .co-sub {
+        font-size: 0.68em; color: #a3781f; letter-spacing: 2px; text-transform: uppercase;
+        margin-top: 3px; font-weight: 700;
+    }
+    .slip-meta {
+        display: flex; justify-content: space-between;
+        font-size: 0.76em; color: #6b7188; margin-top: 12px;
+    }
+    .slip-meta b { color: #1b1d2a; }
+    .slip-meta .slip-id { font-size: 0.6em; color: #a9adc0; margin-top: 5px; letter-spacing: 0.2px; }
+
+    .slip-section-title {
+        font-size: 0.7em;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        font-weight: 800;
+        color: #007c8c;
+        margin: 14px 0 8px;
+        display: flex; align-items: center; gap: 7px;
+    }
+    .slip-section-title::after { content: ''; flex-grow: 1; height: 1px; background: linear-gradient(90deg, #d8dceb, transparent); }
+    .slip-section-title.minus { color: #d6197e; }
+    .slip-row {
+        display: flex; justify-content: space-between; align-items: baseline;
+        font-size: 0.86em;
+        padding: 5px 0;
+        color: #40445a;
+    }
+    .slip-row .slip-val { font-weight: 700; color: #1b1d2a; font-family: var(--font-display); font-variant-numeric: tabular-nums; }
+    .slip-row.sub { padding-left: 10px; font-size: 0.8em; color: #6b7188; }
+    .slip-total-row {
+        display: flex; justify-content: space-between;
+        font-weight: 800; font-size: 0.92em;
+        padding-top: 8px; margin-top: 6px;
+        border-top: 1px solid #e2e5f0;
+        font-family: var(--font-display);
+        font-variant-numeric: tabular-nums;
+    }
+    .slip-total-row.income { color: #00907a; }
+    .slip-total-row.deduction { color: #d6197e; }
+
+    .slip-final {
+        margin-top: 18px;
+        padding: 17px 16px;
+        border-radius: 13px;
+        background: linear-gradient(120deg, rgba(0,195,214,0.1), rgba(255,176,46,0.09), rgba(255,46,166,0.1));
+        border: 1px solid #e7c98c;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    .slip-final::before, .slip-final::after {
+        content: '';
+        position: absolute; width: 12px; height: 12px;
+        border: 1.5px solid #d6a63c;
+        opacity: 0.7;
+    }
+    .slip-final::before { top: 6px; left: 6px; border-right: none; border-bottom: none; }
+    .slip-final::after { bottom: 6px; right: 6px; border-left: none; border-top: none; }
+    .slip-final .label { font-size: 0.72em; color: #6b7188; text-transform: uppercase; letter-spacing: 0.6px; }
+    .slip-final .value {
+        font-size: 1.6em; font-weight: 800; margin-top: 5px;
+        font-family: var(--font-display);
+        font-variant-numeric: tabular-nums;
+        background: linear-gradient(90deg, #007c8c, #d6197e);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .slip-sign {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        margin-top: 22px;
+        text-align: center;
+    }
+    .slip-sign .sign-block { flex: 1; }
+    .slip-sign .sign-line {
+        height: 46px;
+        border-bottom: 1px solid #c7cbdb;
+        margin-bottom: 6px;
+        display: flex; align-items: flex-end; justify-content: center;
+        padding-bottom: 4px;
+    }
+    .slip-sign .sign-line .seal {
+        width: 34px; height: 34px;
+        border-radius: 50%;
+        border: 1.5px dashed #d6a63c;
+        display: flex; align-items: center; justify-content: center;
+        font-family: var(--font-display);
+        font-size: 0.55em; font-weight: 800;
+        color: #a3781f;
+        transform: rotate(-8deg);
+        opacity: 0.85;
+        letter-spacing: 0.3px;
+    }
+    .slip-sign .sign-label { font-size: 0.68em; color: #6b7188; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
+
+    .slip-footer {
+        margin-top: 18px;
+        font-size: 0.66em;
+        color: #9297ab;
+        text-align: center;
+        line-height: 1.5;
+        border-top: 1px dashed #d8dceb;
+        padding-top: 10px;
+    }
+    .slip-actions { display: flex; gap: 10px; margin-top: 16px; }
+    .slip-actions .save-button { margin-top: 0; }
+
+    .bukti-table {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+        font-size: 0.68em;
+        margin: 4px 0 10px;
+    }
+    .bukti-table th, .bukti-table td {
+        border: 1px solid #dde1ee;
+        padding: 5px 4px;
+        text-align: left;
+        color: #40445a;
+        vertical-align: top;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    .bukti-table th {
+        background: #eef1fa;
+        color: #1b1d2a;
+        font-weight: 800;
+        text-transform: uppercase;
+        font-size: 0.86em;
+        letter-spacing: 0.2px;
+    }
+    .bukti-table td.num, .bukti-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .bukti-table tr.libur td { background: #fff3f8; }
+    .bukti-table tfoot td { font-weight: 800; border-top: 2px solid #c7cbdb; background: #f4f6fb; font-variant-numeric: tabular-nums; }
+    .bukti-table .kat-tag { display: block; font-size: 0.85em; font-weight: 700; margin-top: 2px; }
+    .bukti-table .kat-tag.libur { color: #d6197e; }
+    .bukti-table .kat-tag.kerja { color: #6b7188; }
+    .print-outline-btn {
+        flex: 1;
+        background: rgba(255,255,255,0.05);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 13px;
+        padding: 13px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 0.92em;
+    }
+    @media print {
+        body * { visibility: hidden; }
+        #slipModal, #slipModal * { visibility: visible; }
+        #slipModal { position: absolute; inset: 0; background: white !important; backdrop-filter: none; display: block !important; }
+        #slipModal .modal-content { box-shadow: none; border: none; max-height: none; margin: 0; max-width: 100%; }
+        #slipModal .no-print { display: none !important; }
+        .slip-paper { border-radius: 0; }
+    }
+
+    #slipModal .modal-content { padding-left: 10px; padding-right: 10px; }
+
+    @media (max-width: 380px) {
+        .stat-grid { grid-template-columns: 1fr; }
+    }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+    <div class="brand">
+        <div class="brand-text">
+            <h1>Catatan Lemburan</h1>
+            <div class="sub-row">
+                <span class="live-pill" id="live-pill">Periode Aktif</span>
+            </div>
+        </div>
+        <button class="icon-button" id="settings-button" title="Pengaturan">
+            <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        </button>
+    </div>
+
+    <div class="container">
+        <div class="period-row">
+            <div class="period-label">
+                <small><svg class="icon" viewBox="0 0 24 24" style="width:11px;height:11px;"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg> Periode</small>
+                <span class="period-display"><span id="open-date"></span> — <span id="close-date"></span></span>
+            </div>
+            <select id="period-select"></select>
+        </div>
+
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="stat-label"><span class="icon-chip"><svg class="icon" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg></span> Gaji Pokok</div>
+                <div class="stat-value" id="stat-gaji-pokok">Rp 0</div>
+            </div>
+            <div class="stat-card tunjangan">
+                <div class="stat-label"><span class="icon-chip"><svg class="icon" viewBox="0 0 24 24"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg></span> Total Tunjangan</div>
+                <div class="stat-value-row">
+                    <span class="stat-value" id="stat-tunjangan">Rp 0</span>
+                    <button class="detail-toggle" id="tunjangan-detail-btn" title="Lihat rincian tunjangan">
+                        <svg class="icon chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-panel" id="tunjangan-detail-panel">
+            <div class="mini-list" id="tunjangan-detail-list"></div>
+        </div>
+
+        <div class="absen-strip">
+            <span class="dot-sick"><span class="dot"></span>Sakit: <b id="count-sakit">0</b> hari</span>
+            <div class="divider"></div>
+            <span class="dot-izin"><span class="dot"></span>Izin: <b id="count-izin">0</b> hari</span>
+        </div>
+
+        <div class="section-heading">
+            <h2><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg> Riwayat Lembur</h2>
+            <div class="line"></div>
+        </div>
+
+        <div class="overtime-list-container">
+            <div id="overtime-list"></div>
+        </div>
+
+        <div class="totals-box">
+            <div class="totals-row"><span class="label-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>Total Lemburan</span><span class="val green">Rp <span id="total-overtime-cost">0</span></span></div>
+            <div class="totals-row"><span class="label-icon"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>Total Jam</span><span class="val cyan"><span id="total-overtime-hour">0</span> Jam</span></div>
+            <div class="totals-row">
+                <span class="label-icon"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path></svg>Total Potongan</span>
+                <span class="val-wrap">
+                    <span class="val red">- Rp <span id="total-potongan">0</span></span>
+                    <button class="detail-toggle inline" id="potongan-detail-btn" title="Lihat rincian potongan"><svg class="icon chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"></path></svg></button>
+                </span>
+            </div>
+        </div>
+
+        <div class="detail-panel" id="potongan-detail-panel">
+            <div class="mini-list" id="potongan-detail-list"></div>
+        </div>
+
+        <div class="total-salary">
+            Total Gaji Estimasi
+            <span class="amount">Rp <span id="total-salary">0</span></span>
+        </div>
+
+        <div class="action-row">
+            <button class="slip-button" id="slip-button">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="10"></circle></svg>
+                <span class="label">Bukti Catatan Lemburan</span>
+            </button>
+            <button class="add-button" id="add-button">+</button>
+        </div>
+    </div>
+
+    <div class="legal-text-container">
+        <h3><svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px;"><path d="M12 2 3 7v6c0 5 4 8 9 9 5-1 9-4 9-9V7z"></path></svg> Referensi Hukum (PP No. 35 Tahun 2021)</h3>
+        <p><strong>Pasal 31 (Pengali Upah):</strong><br>
+        • Hari Kerja: Jam ke-1 (1,5x), jam berikutnya (2x).<br>
+        • Hari Libur: Jam 1-8 (2x), Jam ke-9 (3x), Jam ke-10 dst (4x).</p>
+
+        <p><strong>Pasal 32 (Upah Per Jam):</strong><br>
+        Rumus: 1/173 × Upah Sebulan (Gapok + Tunjangan Tetap).</p>
+
+        <p><strong>Aturan Istirahat Aplikasi:</strong><br>
+        • Hari Libur: Jam 11:45 - 12:45 (Potong 1 Jam).<br>
+        • Hari Kerja: Jam 18:00 - 18:30 (Potong 30 Menit).</p>
+
+        <p><strong>Aturan Absensi:</strong><br>
+        • Sakit: gaji tidak dipotong.<br>
+        • Izin: gaji dipotong senilai 1 hari kerja (Gaji Pokok ÷ 22 hari) per hari izin.</p>
+    </div>
+
+    <div class="footer-note">Dibuat untuk keperluan pencatatan lemburan pribadi</div>
+</div>
+
+<!-- Modal Tambah Lemburan -->
+<div id="overtimeModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-head">
+            <h2><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>Tambah Lemburan</h2>
+            <span class="close-button" id="close-button">&times;</span>
+        </div>
+
+        <div class="field-group">
+            <label style="margin-top:0;">Alasan Lembur</label>
+            <input type="text" id="overtime-reason" value="Packaging Tmmin Export D90">
+
+            <label>Tanggal</label>
+            <input type="date" id="TGL">
+
+            <label>Waktu Lembur</label>
+            <div class="time-range-container">
+                <div class="time-input-group">
+                    <label>Mulai</label>
+                    <input type="time" id="jam-mulai">
+                </div>
+                <div class="time-input-group">
+                    <label>Selesai</label>
+                    <input type="time" id="jam-selesai">
+                </div>
+            </div>
+        </div>
+
+        <div class="holiday-toggle">
+            <input type="checkbox" id="is-holiday">
+            <label for="is-holiday">Lembur Hari Libur</label>
+        </div>
+
+        <div class="summary-box">
+            <div id="info-potongan" style="font-style: italic;">Potongan: -</div>
+            <div class="summary-row">
+                <span>Durasi Bersih:</span>
+                <span id="display-durasi" style="font-weight:bold;">0</span>&nbsp;Jam
+            </div>
+            <div class="summary-row">
+                <span>Estimasi Biaya:</span>
+                <span id="calculated-cost" style="font-weight:bold;">Rp 0</span>
+            </div>
+        </div>
+
+        <button class="save-button" id="save-overtime">Simpan Data</button>
+    </div>
+</div>
+
+<!-- Modal Pengaturan -->
+<div id="settingsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-head">
+            <h2><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>Pengaturan</h2>
+            <span class="close-button" id="close-settings-button">&times;</span>
+        </div>
+
+        <div class="settings-section">
+            <div class="settings-section-title">Gaji Pokok</div>
+            <input type="number" id="setting-gaji-pokok" class="gaji-pokok-input" placeholder="Contoh: 3520000">
+        </div>
+
+        <div class="settings-section">
+            <div class="settings-section-title">Tunjangan</div>
+            <div class="settings-section-hint">Semua tunjangan (tetap/tidak tetap) dijumlah ke total gaji.</div>
+            <div class="mini-list" id="tunjangan-list"></div>
+            <div class="add-row">
+                <div class="grow"><input type="text" id="new-tunjangan-nama" placeholder="Nama tunjangan"></div>
+                <div class="grow2"><input type="number" id="new-tunjangan-jumlah" placeholder="Jumlah (Rp)"></div>
+                <button class="add-row-btn" id="add-tunjangan-btn" title="Tambah">+</button>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <div class="settings-section-title">Potongan</div>
+            <div class="settings-section-hint">Potongan tetap per periode (misal: BPJS, kasbon, dll).</div>
+            <div class="mini-list" id="potongan-list"></div>
+            <div class="add-row">
+                <div class="grow"><input type="text" id="new-potongan-nama" placeholder="Nama potongan"></div>
+                <div class="grow2"><input type="number" id="new-potongan-jumlah" placeholder="Jumlah (Rp)"></div>
+                <button class="add-row-btn" id="add-potongan-btn" title="Tambah">+</button>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <div class="settings-section-title">Tanggal Tidak Masuk</div>
+            <div class="settings-section-hint">Sakit: gaji tidak dipotong. Izin: gaji dipotong otomatis.</div>
+            <div class="mini-list" id="absensi-list"></div>
+            <div class="add-row">
+                <div class="grow"><input type="date" id="new-absensi-tanggal"></div>
+                <div class="grow2">
+                    <select id="new-absensi-jenis" class="field-select">
+                        <option value="sakit">Sakit</option>
+                        <option value="izin">Izin</option>
+                    </select>
+                </div>
+                <button class="add-row-btn" id="add-absensi-btn" title="Tambah">+</button>
+            </div>
+        </div>
+
+        <button class="save-button" id="close-settings-done">Selesai</button>
+    </div>
+</div>
+
+<!-- Modal Slip Gaji -->
+<div id="slipModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-head no-print">
+            <h2><svg class="icon" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"></path><circle cx="12" cy="12" r="10"></circle></svg>Bukti Catatan Lemburan</h2>
+            <span class="close-button" id="close-slip-button">&times;</span>
+        </div>
+
+        <div class="slip-paper" id="slip-body"></div>
+
+        <div class="slip-actions no-print">
+            <button class="save-button" id="close-slip-done" style="width:100%;">Tutup</button>
+        </div>
+    </div>
+</div>
+<script>
+    /* ===================== DATA & SETTINGS ===================== */
+    const DEFAULT_SETTINGS = {
+        gajiPokok: 3520000,
+        tunjangan: [{ id: 't1', nama: 'Tunjangan Tetap', jumlah: 51000 }],
+        potongan: []
+    };
+
+    function loadSettings() {
+        const raw = localStorage.getItem('appSettings');
+        if (!raw) return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+        try {
+            const parsed = JSON.parse(raw);
+            return {
+                gajiPokok: typeof parsed.gajiPokok === 'number' ? parsed.gajiPokok : DEFAULT_SETTINGS.gajiPokok,
+                tunjangan: Array.isArray(parsed.tunjangan) ? parsed.tunjangan : [],
+                potongan: Array.isArray(parsed.potongan) ? parsed.potongan : []
+            };
+        } catch (e) {
+            return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+        }
+    }
+
+    function saveSettings() {
+        localStorage.setItem('appSettings', JSON.stringify(appSettings));
+    }
+
+    function genId() {
+        return 'id' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+    }
+
+    let appSettings = loadSettings();
+    let overtimeData = JSON.parse(localStorage.getItem('overtimeData')) || {};
+    let absensiData = JSON.parse(localStorage.getItem('absensiData')) || {};
+    let currentNetHours = 0;
+
+    function totalTunjangan() {
+        return appSettings.tunjangan.reduce((sum, t) => sum + Number(t.jumlah || 0), 0);
+    }
+    function totalPotonganTetap() {
+        return appSettings.potongan.reduce((sum, p) => sum + Number(p.jumlah || 0), 0);
+    }
+    function upahSebulan() {
+        return appSettings.gajiPokok;
+    }
+    function upahPerJam() {
+        return upahSebulan() / 173;
+    }
+    function upahPerHari() {
+        return upahSebulan() / 22;
+    }
+
+    /* ===================== PERIODE OTOMATIS (SEMUA BULAN SEBELUM SEKARANG + SEKARANG) =====================
+       Periode berjalan tiap tanggal 16 s/d 15 bulan berikutnya. Dropdown berisi periode SEKARANG
+       dan SEMUA periode sebelumnya (bukan cuma satu bulan kemarin) — tidak ada periode masa depan.
+       Begitu tanggal berganti ke 16, periode baru otomatis muncul menggantikan yang lama. */
+    const bulanIndoLower = ["januari","februari","maret","april","mei","juni","juli","agustus","september","oktober","november","desember"];
+    const bulanIndoTitle = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+    const bulanIndoShort = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agt","Sep","Okt","Nov","Des"];
+
+    function buildPeriodKey(startIdx, startYear) {
+        const endIdx = (startIdx + 1) % 12;
+        const endYear = endIdx === 0 ? startYear + 1 : startYear;
+        return `${bulanIndoLower[startIdx]}-${bulanIndoLower[endIdx]}-${endYear}`;
+    }
+    function buildPeriodData(startIdx) {
+        const endIdx = (startIdx + 1) % 12;
+        return { start: `16 ${bulanIndoShort[startIdx]}`, end: `15 ${bulanIndoShort[endIdx]}` };
+    }
+    function buildPeriodLabel(startIdx, startYear) {
+        const endIdx = (startIdx + 1) % 12;
+        const endYear = endIdx === 0 ? startYear + 1 : startYear;
+        return startYear === endYear
+            ? `${bulanIndoTitle[startIdx]} – ${bulanIndoTitle[endIdx]} ${startYear}`
+            : `${bulanIndoTitle[startIdx]} ${startYear} – ${bulanIndoTitle[endIdx]} ${endYear}`;
+    }
+    function parsePeriodKey(key) {
+        const parts = key.split('-');
+        if (parts.length !== 3) return null;
+        const startIdx = bulanIndoLower.indexOf(parts[0]);
+        const endIdx = bulanIndoLower.indexOf(parts[1]);
+        const year = parseInt(parts[2], 10);
+        if (startIdx === -1 || endIdx === -1 || isNaN(year)) return null;
+        const startYear = endIdx === 0 ? year - 1 : year;
+        return { startIdx, startYear };
+    }
+
+    /* Menentukan bulan-awal & tahun-awal dari periode yang sedang berjalan HARI INI */
+    function getCurrentPeriodStart() {
+        const now = new Date();
+        const tgl = now.getDate();
+        const bln = now.getMonth();
+        const thn = now.getFullYear();
+        if (tgl > 15) {
+            return { startIdx: bln, startYear: thn };
+        }
+        const startIdx = bln === 0 ? 11 : bln - 1;
+        const startYear = bln === 0 ? thn - 1 : thn;
+        return { startIdx, startYear };
+    }
+
+    const periodData = {};
+    const periodLabel = {};
+    let CURRENT_PERIOD_KEY;
+
+    function setupPeriods() {
+        const cur = getCurrentPeriodStart();
+        CURRENT_PERIOD_KEY = buildPeriodKey(cur.startIdx, cur.startYear);
+        periodData[CURRENT_PERIOD_KEY] = buildPeriodData(cur.startIdx);
+        periodLabel[CURRENT_PERIOD_KEY] = buildPeriodLabel(cur.startIdx, cur.startYear);
+
+        // Bangun semua periode sebelum periode sekarang (dibatasi wajar 10 tahun ke belakang)
+        const HISTORY_LIMIT = 120;
+        const pastKeysOldToNew = [];
+        let idx = cur.startIdx, year = cur.startYear;
+        for (let i = 0; i < HISTORY_LIMIT; i++) {
+            idx = idx === 0 ? 11 : idx - 1;
+            if (idx === 11) year -= 1;
+            const key = buildPeriodKey(idx, year);
+            periodData[key] = buildPeriodData(idx);
+            periodLabel[key] = buildPeriodLabel(idx, year);
+            pastKeysOldToNew.unshift(key);
+        }
+
+        // Sertakan juga periode lama yang datanya masih tersimpan tapi di luar batas riwayat di atas
+        const storedKeys = new Set([...Object.keys(overtimeData), ...Object.keys(absensiData)]);
+        storedKeys.forEach(key => {
+            if (periodData[key]) return;
+            const parsed = parsePeriodKey(key);
+            if (!parsed) return;
+            periodData[key] = buildPeriodData(parsed.startIdx);
+            periodLabel[key] = buildPeriodLabel(parsed.startIdx, parsed.startYear);
+            pastKeysOldToNew.unshift(key);
+        });
+
+        const allKeys = [...pastKeysOldToNew, CURRENT_PERIOD_KEY];
+        const select = document.getElementById('period-select');
+        select.innerHTML = allKeys.map(key =>
+            `<option value="${key}">${periodData[key].start} - ${periodData[key].end}${key === CURRENT_PERIOD_KEY ? ' (Sekarang)' : ''}</option>`
+        ).join('');
+        select.value = CURRENT_PERIOD_KEY;
+    }
+
+    /* ===================== HITUNG LEMBUR ===================== */
+    function hitungBiaya(jam, isHoliday) {
+        const UpahPerJam = upahPerJam();
+        if (isHoliday) {
+            let biaya = 0;
+            if (jam <= 8) biaya = jam * 2 * UpahPerJam;
+            else if (jam <= 9) biaya = (8 * 2 * UpahPerJam) + (3 * UpahPerJam);
+            else biaya = (8 * 2 * UpahPerJam) + (3 * UpahPerJam) + ((jam - 9) * 4 * UpahPerJam);
+            return Math.round(biaya);
+        }
+        if (jam <= 1) return Math.round(1.5 * jam * UpahPerJam);
+        return Math.round((1.5 * UpahPerJam) + ((jam - 1) * 2 * UpahPerJam));
+    }
+
+    function updateKalkulasi() {
+        const mulai = document.getElementById('jam-mulai').value;
+        const selesai = document.getElementById('jam-selesai').value;
+        const isHoliday = document.getElementById('is-holiday').checked;
+        const infoPotongan = document.getElementById('info-potongan');
+
+        if (mulai && selesai) {
+            let [h1, m1] = mulai.split(':').map(Number);
+            let [h2, m2] = selesai.split(':').map(Number);
+            let t1 = h1 * 60 + m1;
+            let t2 = h2 * 60 + m2;
+            if (t2 < t1) t2 += 1440;
+
+            let durasiKotor = (t2 - t1) / 60;
+            let potongan = 0;
+            let ketPotongan = "Tidak ada potongan istirahat";
+
+            if (isHoliday) {
+                let breakStart = 11 * 60 + 45;
+                let breakEnd = 12 * 60 + 45;
+                if (t1 < breakEnd && t2 > breakStart) {
+                    potongan = 1;
+                    ketPotongan = "Potongan istirahat 1 jam (11:45-12:45)";
+                }
+            } else {
+                let breakStartRegular = 18 * 60;
+                let breakEndRegular = 18.5 * 60;
+                if (t1 < breakEndRegular && t2 > breakStartRegular) {
+                    potongan = 0.5;
+                    ketPotongan = "Potongan istirahat 30 mnt (18:00-18:30)";
+                }
+            }
+
+            currentNetHours = Math.max(0, durasiKotor - potongan);
+            infoPotongan.innerText = ketPotongan;
+            document.getElementById('display-durasi').innerText = currentNetHours;
+            document.getElementById('calculated-cost').innerText = "Rp " + hitungBiaya(currentNetHours, isHoliday).toLocaleString('id-ID');
+        }
+    }
+
+    [document.getElementById('jam-mulai'), document.getElementById('jam-selesai'), document.getElementById('is-holiday')].forEach(el => {
+        el.addEventListener('change', updateKalkulasi);
+    });
+
+    /* ===================== HITUNG TOTAL (dipakai render & slip) ===================== */
+    function currentPeriod() {
+        return document.getElementById('period-select').value;
+    }
+
+    function computeTotals(period) {
+        const data = overtimeData[period] || [];
+        let totalCost = 0, totalHours = 0;
+        data.forEach(item => { totalCost += item.biaya; totalHours += parseFloat(item.jam); });
+
+        const absensiPeriod = absensiData[period] || [];
+        const jumlahSakit = absensiPeriod.filter(a => a.jenis === 'sakit').length;
+        const jumlahIzin = absensiPeriod.filter(a => a.jenis === 'izin').length;
+        const potonganIzin = Math.round(jumlahIzin * upahPerHari());
+        const potonganTetap = totalPotonganTetap();
+        const totalPotongan = potonganTetap + potonganIzin;
+        const tunjangan = totalTunjangan();
+        const totalPendapatan = appSettings.gajiPokok + tunjangan + totalCost;
+        const totalSalary = totalPendapatan - totalPotongan;
+
+        return { data, totalCost, totalHours, jumlahSakit, jumlahIzin, potonganIzin, potonganTetap, totalPotongan, tunjangan, totalPendapatan, totalSalary };
+    }
+
+    /* ===================== RENDER UTAMA ===================== */
+    function render() {
+        const period = currentPeriod();
+        const t = computeTotals(period);
+        const list = document.getElementById('overtime-list');
+        list.innerHTML = '';
+
+        t.data.forEach((item, index) => {
+            const holidayClass = item.libur ? ' holiday' : '';
+            const badge = item.libur ? '<span class="holiday-badge">Libur</span>' : '';
+            list.innerHTML += `
+                <div class="overtime-item${holidayClass}">
+                    <div class="overtime-info">
+                        <div class="overtime-date-row">
+                            <span class="overtime-date">${item.tanggal}</span>${badge}
+                        </div>
+                        <span class="overtime-reason">${item.alasan}</span>
+                    </div>
+                    <div class="overtime-meta">
+                        <span class="overtime-hours">${item.jam} j</span>
+                        <span class="overtime-cost">Rp ${item.biaya.toLocaleString('id-ID')}</span>
+                    </div>
+                    <button class="delete-button" onclick="hapus(this, ${index})">×</button>
+                </div>`;
+        });
+
+        document.getElementById('stat-gaji-pokok').innerText = 'Rp ' + appSettings.gajiPokok.toLocaleString('id-ID');
+        document.getElementById('stat-tunjangan').innerText = 'Rp ' + t.tunjangan.toLocaleString('id-ID');
+        document.getElementById('count-sakit').innerText = t.jumlahSakit;
+        document.getElementById('count-izin').innerText = t.jumlahIzin;
+
+        document.getElementById('total-overtime-cost').innerText = t.totalCost.toLocaleString('id-ID');
+        document.getElementById('total-overtime-hour').innerText = t.totalHours.toFixed(1).replace(/\.0+$/, '');
+        document.getElementById('total-potongan').innerText = t.totalPotongan.toLocaleString('id-ID');
+        document.getElementById('total-salary').innerText = Math.max(0, t.totalSalary).toLocaleString('id-ID');
+
+        const dates = periodData[period] || {start: '-', end: '-'};
+        document.getElementById('open-date').innerText = dates.start;
+        document.getElementById('close-date').innerText = dates.end;
+
+        const livePill = document.getElementById('live-pill');
+        livePill.style.display = (period === CURRENT_PERIOD_KEY) ? 'inline-flex' : 'none';
+
+        renderTunjanganDetailPanel(t);
+        renderPotonganDetailPanel(t);
+    }
+
+    /* ===================== DETAIL TUNJANGAN & POTONGAN (halaman utama) ===================== */
+    function renderTunjanganDetailPanel(t) {
+        const box = document.getElementById('tunjangan-detail-list');
+        if (!appSettings.tunjangan.length) {
+            box.innerHTML = '<div class="mini-empty">Belum ada tunjangan yang diatur.</div>';
+            return;
+        }
+        box.innerHTML = appSettings.tunjangan.map(item => `
+            <div class="mini-item">
+                <div class="mini-info"><span class="mini-name">${item.nama}</span></div>
+                <span class="mini-value plus">+Rp ${Number(item.jumlah).toLocaleString('id-ID')}</span>
+            </div>`).join('');
+    }
+
+    function renderPotonganDetailPanel(t) {
+        const box = document.getElementById('potongan-detail-list');
+        let rows = appSettings.potongan.map(item => `
+            <div class="mini-item">
+                <div class="mini-info"><span class="mini-name">${item.nama}</span></div>
+                <span class="mini-value minus">-Rp ${Number(item.jumlah).toLocaleString('id-ID')}</span>
+            </div>`).join('');
+
+        if (t.jumlahIzin > 0) {
+            rows += `
+            <div class="mini-item">
+                <div class="mini-info"><span class="mini-name">Izin (${t.jumlahIzin} hari × Gapok÷22)</span></div>
+                <span class="mini-value minus">-Rp ${t.potonganIzin.toLocaleString('id-ID')}</span>
+            </div>`;
+        }
+
+        box.innerHTML = rows || '<div class="mini-empty">Belum ada potongan pada periode ini.</div>';
+    }
+
+    function toggleDetailPanel(btnId, panelId) {
+        const btn = document.getElementById(btnId);
+        const panel = document.getElementById(panelId);
+        btn.classList.toggle('open');
+        panel.classList.toggle('open');
+    }
+    document.getElementById('tunjangan-detail-btn').onclick = () => toggleDetailPanel('tunjangan-detail-btn', 'tunjangan-detail-panel');
+    document.getElementById('potongan-detail-btn').onclick = () => toggleDetailPanel('potongan-detail-btn', 'potongan-detail-panel');
+
+    function hapus(btn, index) {
+        if (!btn.classList.contains('confirm-delete')) {
+            btn.classList.add('confirm-delete');
+            btn.innerHTML = '✓';
+            btn.title = 'Klik sekali lagi untuk menghapus';
+            clearTimeout(btn._resetTimer);
+            btn._resetTimer = setTimeout(() => {
+                btn.classList.remove('confirm-delete');
+                btn.innerHTML = '×';
+            }, 2500);
+            return;
+        }
+        overtimeData[currentPeriod()].splice(index, 1);
+        localStorage.setItem('overtimeData', JSON.stringify(overtimeData));
+        render();
+    }
+
+    document.getElementById('save-overtime').onclick = () => {
+        const p = currentPeriod();
+        const tgl = document.getElementById('TGL').value;
+        const mulai = document.getElementById('jam-mulai').value;
+        const selesai = document.getElementById('jam-selesai').value;
+
+        if (!tgl || !mulai || !selesai || currentNetHours <= 0) return alert('Input tanggal dan jam dengan benar!');
+
+        if (!overtimeData[p]) overtimeData[p] = [];
+        overtimeData[p].push({
+            tanggal: tgl,
+            alasan: document.getElementById('overtime-reason').value,
+            jam: currentNetHours,
+            biaya: hitungBiaya(currentNetHours, document.getElementById('is-holiday').checked),
+            libur: document.getElementById('is-holiday').checked
+        });
+
+        localStorage.setItem('overtimeData', JSON.stringify(overtimeData));
+        document.getElementById('overtimeModal').classList.remove('show');
+        render();
+    };
+
+    document.getElementById('add-button').onclick = () => document.getElementById('overtimeModal').classList.add('show');
+    document.getElementById('close-button').onclick = () => document.getElementById('overtimeModal').classList.remove('show');
+    document.getElementById('period-select').onchange = () => { render(); renderAbsensiList(); };
+
+    /* ===================== PENGATURAN: TUNJANGAN ===================== */
+    function renderTunjanganList() {
+        const box = document.getElementById('tunjangan-list');
+        if (!appSettings.tunjangan.length) {
+            box.innerHTML = '<div class="mini-empty">Belum ada tunjangan.</div>';
+            return;
+        }
+        box.innerHTML = appSettings.tunjangan.map((t, i) => `
+            <div class="mini-item">
+                <div class="mini-info"><span class="mini-name">${t.nama}</span></div>
+                <span class="mini-value plus">+Rp ${Number(t.jumlah).toLocaleString('id-ID')}</span>
+                <button class="mini-del" onclick="removeTunjangan(${i})">×</button>
+            </div>`).join('');
+    }
+    function removeTunjangan(i) {
+        appSettings.tunjangan.splice(i, 1);
+        saveSettings();
+        renderTunjanganList();
+        render();
+    }
+    document.getElementById('add-tunjangan-btn').onclick = () => {
+        const namaEl = document.getElementById('new-tunjangan-nama');
+        const jumlahEl = document.getElementById('new-tunjangan-jumlah');
+        const nama = namaEl.value.trim();
+        const jumlah = Number(jumlahEl.value);
+        if (!nama || !jumlah || jumlah <= 0) return alert('Isi nama dan jumlah tunjangan dengan benar!');
+        appSettings.tunjangan.push({ id: genId(), nama, jumlah });
+        saveSettings();
+        namaEl.value = ''; jumlahEl.value = '';
+        renderTunjanganList();
+        render();
+    };
+
+    /* ===================== PENGATURAN: POTONGAN ===================== */
+    function renderPotonganList() {
+        const box = document.getElementById('potongan-list');
+        if (!appSettings.potongan.length) {
+            box.innerHTML = '<div class="mini-empty">Belum ada potongan.</div>';
+            return;
+        }
+        box.innerHTML = appSettings.potongan.map((p, i) => `
+            <div class="mini-item">
+                <div class="mini-info"><span class="mini-name">${p.nama}</span></div>
+                <span class="mini-value minus">-Rp ${Number(p.jumlah).toLocaleString('id-ID')}</span>
+                <button class="mini-del" onclick="removePotongan(${i})">×</button>
+            </div>`).join('');
+    }
+    function removePotongan(i) {
+        appSettings.potongan.splice(i, 1);
+        saveSettings();
+        renderPotonganList();
+        render();
+    }
+    document.getElementById('add-potongan-btn').onclick = () => {
+        const namaEl = document.getElementById('new-potongan-nama');
+        const jumlahEl = document.getElementById('new-potongan-jumlah');
+        const nama = namaEl.value.trim();
+        const jumlah = Number(jumlahEl.value);
+        if (!nama || !jumlah || jumlah <= 0) return alert('Isi nama dan jumlah potongan dengan benar!');
+        appSettings.potongan.push({ id: genId(), nama, jumlah });
+        saveSettings();
+        namaEl.value = ''; jumlahEl.value = '';
+        renderPotonganList();
+        render();
+    };
+
+    /* ===================== PENGATURAN: ABSENSI (SAKIT / IZIN) ===================== */
+    function renderAbsensiList() {
+        const period = currentPeriod();
+        const box = document.getElementById('absensi-list');
+        const list = absensiData[period] || [];
+        if (!list.length) {
+            box.innerHTML = '<div class="mini-empty">Belum ada tanggal tidak masuk pada periode ini.</div>';
+            return;
+        }
+        box.innerHTML = list.map((a, i) => `
+            <div class="mini-item">
+                <div class="mini-info">
+                    <span class="mini-name">${a.tanggal}</span>
+                    <span class="mini-sub">${a.jenis === 'sakit' ? 'Sakit — gaji tidak dipotong' : 'Izin — gaji dipotong'}</span>
+                </div>
+                <span class="mini-value ${a.jenis}">${a.jenis === 'sakit' ? 'Sakit' : 'Izin'}</span>
+                <button class="mini-del" onclick="removeAbsensi(${i})">×</button>
+            </div>`).join('');
+    }
+    function removeAbsensi(i) {
+        const period = currentPeriod();
+        absensiData[period].splice(i, 1);
+        localStorage.setItem('absensiData', JSON.stringify(absensiData));
+        renderAbsensiList();
+        render();
+    }
+    document.getElementById('add-absensi-btn').onclick = () => {
+        const period = currentPeriod();
+        const tglEl = document.getElementById('new-absensi-tanggal');
+        const jenisEl = document.getElementById('new-absensi-jenis');
+        if (!tglEl.value) return alert('Pilih tanggal tidak masuk!');
+        if (!absensiData[period]) absensiData[period] = [];
+        absensiData[period].push({ tanggal: tglEl.value, jenis: jenisEl.value });
+        absensiData[period].sort((a, b) => a.tanggal.localeCompare(b.tanggal));
+        localStorage.setItem('absensiData', JSON.stringify(absensiData));
+        tglEl.value = '';
+        renderAbsensiList();
+        render();
+    };
+
+    /* ===================== PENGATURAN: GAJI POKOK & MODAL ===================== */
+    document.getElementById('setting-gaji-pokok').addEventListener('change', (e) => {
+        const val = Number(e.target.value);
+        if (!val || val <= 0) { e.target.value = appSettings.gajiPokok; return; }
+        appSettings.gajiPokok = val;
+        saveSettings();
+        render();
+    });
+
+    function openSettings() {
+        document.getElementById('setting-gaji-pokok').value = appSettings.gajiPokok;
+        renderTunjanganList();
+        renderPotonganList();
+        renderAbsensiList();
+        document.getElementById('settingsModal').classList.add('show');
+    }
+    document.getElementById('settings-button').onclick = openSettings;
+    document.getElementById('close-settings-button').onclick = () => document.getElementById('settingsModal').classList.remove('show');
+    document.getElementById('close-settings-done').onclick = () => document.getElementById('settingsModal').classList.remove('show');
+
+    /* ===================== BUKTI CATATAN LEMBURAN (UNTUK KOMPLAIN) ===================== */
+    function formatTanggalCetak() {
+        const d = new Date();
+        return `${d.getDate()} ${bulanIndoTitle[d.getMonth()]} ${d.getFullYear()}`;
+    }
+
+    function renderSlip() {
+        const period = currentPeriod();
+        const t = computeTotals(period);
+        const label = periodLabel[period] || period;
+
+        let entriRowsTable = t.data.length ? t.data.map((item, i) => `
+            <tr class="${item.libur ? 'libur' : ''}">
+                <td>${i + 1}</td>
+                <td>${item.tanggal}<span class="kat-tag ${item.libur ? 'libur' : 'kerja'}">${item.libur ? 'Libur' : 'Kerja'}</span></td>
+                <td>${item.alasan ? item.alasan : '-'}</td>
+                <td class="num">${item.jam} jam</td>
+                <td class="num">Rp ${item.biaya.toLocaleString('id-ID')}</td>
+            </tr>
+        `).join('') : `<tr><td colspan="5" style="text-align:center;color:#9297ab;">Tidak ada catatan lembur pada periode ini.</td></tr>`;
+
+        document.getElementById('slip-body').innerHTML = `
+            <div class="slip-watermark"><span>BUKTI CATATAN LEMBURAN • BUKTI CATATAN LEMBURAN</span></div>
+
+            <div class="slip-head">
+                <div class="co-name">Catatan Lemburan</div>
+                <div class="co-sub">Bukti Catatan Lemburan — Lampiran Komplain</div>
+                <div class="slip-meta">
+                    <span>Periode<br><b>${label}</b></span>
+                    <span style="text-align:right;">Dicetak<br><b>${formatTanggalCetak()}</b></span>
+                </div>
+            </div>
+
+            <div class="slip-section-title">Dasar Perhitungan Upah</div>
+            <div class="slip-row"><span>Upah Pokok</span><span class="slip-val">Rp ${upahSebulan().toLocaleString('id-ID')}</span></div>
+            <div class="slip-row"><span>Upah per Jam (÷173)</span><span class="slip-val">Rp ${Math.round(upahPerJam()).toLocaleString('id-ID')}</span></div>
+
+            <div class="slip-section-title">Riwayat Lembur</div>
+            <table class="bukti-table">
+                <colgroup>
+                    <col style="width:8%;">
+                    <col style="width:21%;">
+                    <col style="width:31%;">
+                    <col style="width:15%;">
+                    <col style="width:25%;">
+                </colgroup>
+                <thead>
+                    <tr><th>No</th><th>Tanggal</th><th>Keterangan</th><th class="num">Jam</th><th class="num">Nilai</th></tr>
+                </thead>
+                <tbody>${entriRowsTable}</tbody>
+                <tfoot>
+                    <tr><td colspan="3">Total</td><td class="num">${t.totalHours.toFixed(1).replace(/\.0+$/, '')} jam</td><td class="num">Rp ${t.totalCost.toLocaleString('id-ID')}</td></tr>
+                </tfoot>
+            </table>
+
+            <div class="slip-final">
+                <div class="label">Total Nilai Lembur Periode Ini</div>
+                <div class="value">Rp ${t.totalCost.toLocaleString('id-ID')}</div>
+            </div>
+
+            <div class="slip-sign">
+                <div class="sign-block">
+                    <div class="sign-line"><span class="seal">SAH</span></div>
+                    <div class="sign-label">Dibuat oleh Karyawan</div>
+                </div>
+            </div>
+
+            <div class="slip-footer">
+                Dihitung berdasarkan PP No. 35 Tahun 2021 Pasal 31–32.<br>
+                Dokumen ini disusun dari catatan lembur mandiri sebagai bahan lampiran pengajuan komplain jam kerja lembur.
+            </div>
+        `;
+    }
+
+    document.getElementById('slip-button').onclick = () => {
+        renderSlip();
+        document.getElementById('slipModal').classList.add('show');
+    };
+    document.getElementById('close-slip-button').onclick = () => document.getElementById('slipModal').classList.remove('show');
+    document.getElementById('close-slip-done').onclick = () => document.getElementById('slipModal').classList.remove('show');
+
+    /* ===================== INIT ===================== */
+    setupPeriods();
+    render();
+</script>
+</body>
+</html>
